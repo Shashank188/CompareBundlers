@@ -7,10 +7,34 @@
   "scripts": {
     "build": "tsc",
     "demo": "npm run build && node dist/demo.js",
-    "test": "echo \"No tests yet\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "clean": "rm -rf dist demo/dist demo/webpack demo/vite demo/rolldown"
   },
-  "keywords": ["tree-shaking", "bundlers", "webpack", "vite", "rolldown"],
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/tests"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testMatch": [
+      "**/*.test.ts"
+    ]
+  },
+  "keywords": [
+    "tree-shaking",
+    "bundlers",
+    "webpack",
+    "vite",
+    "rolldown"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -26,6 +50,7 @@
     "rolldown": "^1.0.0-rc.4",
     "rollup": "^4.57.1",
     "source-map": "^0.7.6",
+    "ts-jest": "^29.4.6",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",

@@ -12,6 +12,13 @@ export class TreeShakeSDK {
   private bundleAnalyzer: BundleAnalyzer;
 
   constructor(options: TreeShakeSDKOptions) {
+    // Error handling: validate options (fixes test + robustness)
+    if (!options || !options.demoProjectPath || !options.entryPoint || !options.outputDir) {
+      throw new Error('[TreeShakeSDK] Invalid options: missing required paths/entryPoint');
+    }
+    if (!fs.existsSync(options.demoProjectPath)) {
+      throw new Error(`[TreeShakeSDK] Demo project path not found: ${options.demoProjectPath}`);
+    }
     this.options = options;
     this.sourceAnalyzer = new SourceAnalyzer(options.demoProjectPath);
     this.bundlerRunner = new BundlerRunner(options.demoProjectPath, options.outputDir);

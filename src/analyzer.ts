@@ -48,13 +48,27 @@ export class SourceAnalyzer {
   }
 
   private async parseFile(filePath: string): Promise<void> {
-    const content = fs.readFileSync(filePath, 'utf8');
+    // Error handling added: validate file, wrap FS/parse in try/catch for robustness
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`[SourceAnalyzer] File not found: ${filePath}`);
+    }
+    let content: string;
+    try {
+      content = fs.readFileSync(filePath, 'utf8');
+    } catch (err: any) {
+      throw new Error(`[SourceAnalyzer] Failed to read ${filePath}: ${err.message}`);
+    }
     const relativePath = path.relative(this.projectRoot, filePath).replace(/\.ts$/, '');
     
-    const ast = parser.parse(content, {
-      sourceType: 'module',
-      plugins: ['typescript']
-    });
+    let ast: any;
+    try {
+      ast = parser.parse(content, {
+        sourceType: 'module',
+        plugins: ['typescript']
+      });
+    } catch (err: any) {
+      throw new Error(`[SourceAnalyzer] Babel parse failed for ${filePath}: ${err.message}`);
+    }
 
     const moduleExports = new Set<string>();
     // moduleImports: importKey (exportName from source, or local) -> source
