@@ -25,7 +25,7 @@
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
       },
       "bundleSizeBytes": 146,
-      "buildTimeMs": 3816.040331,
+      "buildTimeMs": 3602.058414,
       "warnings": [],
       "errors": []
     },
@@ -66,7 +66,7 @@
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
       },
       "bundleSizeBytes": 228,
-      "buildTimeMs": 746.023151,
+      "buildTimeMs": 743.701204,
       "warnings": [],
       "errors": []
     },
@@ -162,8 +162,13 @@
         "utils:deadCode": "Rolldown specific retention (new bundler behavior)"
       },
       "bundleSizeBytes": 491,
-      "buildTimeMs": 564.700255,
-      "warnings": [],
+      "buildTimeMs": 500.014307,
+      "warnings": [
+        " WARN  Option verbose is unrecognized. We will ignore this option.",
+        "(node:40002) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///testbed/compare-bundlers/demo/src/rolldown.config.js is not specified and it doesn't parse as CommonJS.",
+        "To eliminate this warning, add \"type\": \"module\" to /testbed/compare-bundlers/package.json.",
+        "(Use `node --trace-warnings ...` to show where the warning was created)"
+      ],
       "errors": []
     }
   ],
@@ -176,8 +181,8 @@
       "rolldown": 1
     },
     "totalBundleSizeBytes": 865,
-    "avgBuildTimeMs": 1708.9212456666667,
-    "totalWarnings": 0,
+    "avgBuildTimeMs": 1615.2579750000002,
+    "totalWarnings": 4,
     "totalErrors": 0
   }
 }

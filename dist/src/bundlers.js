@@ -36,7 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BundlerRunner = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
-const child_process_1 = require("child_process");
+const child_process_1 = require("child_process"); // use for stdout + stderr capture (enhancement #1)
 class BundlerRunner {
     constructor(demoPath, outputBase) {
         this.demoPath = demoPath;
@@ -49,14 +49,16 @@ class BundlerRunner {
         const warnings = [];
         const errors = [];
         try {
-            // Capture output for warnings/errors tracking (enhancement)
-            const stdout = (0, child_process_1.execSync)(`npx webpack --config ${configPath} --mode production --stats detailed`, {
-                stdio: ['pipe', 'pipe', 'pipe'],
+            // Capture stdout + stderr for complete warnings/errors (enhancement #1: merge outputs)
+            const result = (0, child_process_1.spawnSync)('npx', [`webpack`, `--config`, configPath, `--mode`, `production`, `--stats`, `detailed`], {
                 cwd: this.demoPath,
-                encoding: 'utf8'
+                encoding: 'utf8',
+                stdio: 'pipe'
             });
-            if (stdout.includes('warning') || stdout.includes('WARN'))
-                warnings.push(...stdout.split('\n').filter(l => l.toLowerCase().includes('warn')));
+            const output = (result.stdout || '') + (result.stderr || '');
+            if (output.includes('warning') || output.includes('WARN')) {
+                warnings.push(...output.split('\n').filter(l => l.toLowerCase().includes('warn') || l.toLowerCase().includes('error')));
+            }
             const bundlePath = path.join(outputDir, 'bundle.js');
             const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
             const buildTimeMs = Number(process.hrtime.bigint() - start) / 1000000;
@@ -76,14 +78,15 @@ class BundlerRunner {
         const warnings = [];
         const errors = [];
         try {
-            // Capture output for tracking (enhancement #3)
-            const stdout = (0, child_process_1.execSync)(`npx vite build --config ${configPath} --debug`, {
-                stdio: ['pipe', 'pipe', 'pipe'],
+            // Capture stdout + stderr merge for warnings/errors (enhancement #1)
+            const result = (0, child_process_1.spawnSync)('npx', [`vite`, `build`, `--config`, configPath, `--debug`], {
                 cwd: this.demoPath,
-                encoding: 'utf8'
+                encoding: 'utf8',
+                stdio: 'pipe'
             });
-            if (stdout.includes('warning'))
-                warnings.push(...stdout.split('\n').filter(l => l.toLowerCase().includes('warn')));
+            const output = (result.stdout || '') + (result.stderr || '');
+            if (output.includes('warning'))
+                warnings.push(...output.split('\n').filter(l => l.toLowerCase().includes('warn') || l.toLowerCase().includes('error')));
             // Find actual bundle (Vite may name variably)
             let bundlePath = path.join(outputDir, 'bundle.js');
             if (!fs.existsSync(bundlePath)) {
@@ -109,13 +112,15 @@ class BundlerRunner {
         const warnings = [];
         const errors = [];
         try {
-            const stdout = (0, child_process_1.execSync)(`npx rolldown --config ${configPath} --verbose`, {
-                stdio: ['pipe', 'pipe', 'pipe'],
+            // Capture stdout + stderr merge (enhancement #1)
+            const result = (0, child_process_1.spawnSync)('npx', [`rolldown`, `--config`, configPath, `--verbose`], {
                 cwd: this.demoPath,
-                encoding: 'utf8'
+                encoding: 'utf8',
+                stdio: 'pipe'
             });
-            if (stdout.includes('warning'))
-                warnings.push(...stdout.split('\n').filter(l => l.toLowerCase().includes('warn')));
+            const output = (result.stdout || '') + (result.stderr || '');
+            if (output.includes('warning'))
+                warnings.push(...output.split('\n').filter(l => l.toLowerCase().includes('warn') || l.toLowerCase().includes('error')));
             const bundlePath = path.join(outputDir, 'bundle.js');
             const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
             const buildTimeMs = Number(process.hrtime.bigint() - start) / 1000000;

@@ -38,7 +38,7 @@ const src_1 = require("../src");
 const analyzer_1 = require("../src/analyzer");
 const bundleAnalyzer_1 = require("../src/bundleAnalyzer");
 const bundlers_1 = require("../src/bundlers");
-const fs = __importStar(require("fs"));
+const fs = __importStar(require("fs")); // path unused, removed
 // Mock fs and other deps for unit tests (Jest globals now typed)
 jest.mock('fs');
 jest.mock('child_process');
@@ -77,8 +77,9 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
     // Test BundlerRunner
     test('BundlerRunner handles exec errors', async () => {
         const runner = new bundlers_1.BundlerRunner('/demo', '/out');
-        const { execSync } = require('child_process');
-        execSync.mockImplementation(() => { throw new Error('Bundler failed'); });
+        // Mock spawnSync for enhancement (stderr/stdout)
+        const { spawnSync } = require('child_process');
+        spawnSync.mockImplementation(() => { throw new Error('Bundler failed'); });
         await expect(runner.bundleWithWebpack('entry.ts', '/out')).rejects.toThrow(/failed/);
     });
     // Test TreeShakeSDK integration

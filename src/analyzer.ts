@@ -99,6 +99,15 @@ export class SourceAnalyzer {
           });
         }
       },
+      // Enhancement #4: Handle "export * from 'module'" re-exports (add to exports for graph/symbol tracking)
+      ExportAllDeclaration(path) {
+        if (path.node.source) {
+          const source = path.node.source.value;
+          moduleExports.add(`*from:${source}`); // marker for re-export all
+          // Also track in imports for dependency
+          moduleImports.set(`*from:${source}`, source);
+        }
+      },
       ExportDefaultDeclaration(path) {
         moduleExports.add('default');
       },
