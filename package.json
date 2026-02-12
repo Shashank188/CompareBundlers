@@ -1,6 +1,6 @@
 {
   "name": "compare-bundlers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "TypeScript SDK for comparing tree shaking across bundlers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

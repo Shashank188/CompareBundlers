@@ -7,7 +7,6 @@ export interface SymbolInfo {
 }
 export interface DependencyGraph {
     modules: Map<string, Set<string>>;
-    exports: Map<string, Set<string>>;
     imports: Map<string, Map<string, string>>;
 }
 export interface BundleAnalysis {

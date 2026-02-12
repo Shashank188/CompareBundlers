@@ -46,8 +46,8 @@ class SourceAnalyzer {
     constructor(projectRoot) {
         this.projectRoot = projectRoot;
         this.graph = {
+            // exports removed (unused; see types.ts fix for issue #2)
             modules: new Map(),
-            exports: new Map(),
             imports: new Map()
         };
         this.symbols = new Map();
@@ -68,7 +68,12 @@ class SourceAnalyzer {
                 files.push(...this.getAllTsFiles(fullPath));
             }
             else if (entry.name.endsWith('.ts')) {
-                files.push(fullPath);
+                // FIX for issue #1: Exclude bundler config files (e.g. vite.config.ts, *.config.*)
+                // from source analysis/tree-shaking comparison to avoid polluting symbol graph
+                // and dependency traversal with build tooling code.
+                if (!entry.name.includes('config')) {
+                    files.push(fullPath);
+                }
             }
         }
         return files;
@@ -81,6 +86,8 @@ class SourceAnalyzer {
             plugins: ['typescript']
         });
         const moduleExports = new Set();
+        // moduleImports: importKey (exportName from source, or local) -> source
+        // (see ImportDeclaration for alias fix #3)
         const moduleImports = new Map();
         (0, traverse_1.default)(ast, {
             ExportNamedDeclaration(path) {
@@ -110,12 +117,23 @@ class SourceAnalyzer {
             ImportDeclaration(path) {
                 const source = path.node.source.value;
                 path.node.specifiers.forEach(spec => {
+                    let importKey;
                     if (t.isImportSpecifier(spec) && t.isIdentifier(spec.imported)) {
-                        moduleImports.set(spec.local.name, source);
+                        // FIX for issue #3: Use *imported/export name from source* (spec.imported.name)
+                        // as the key in moduleImports (instead of local alias). This ensures
+                        // symKey = `${sourceMod}:${exportName}` always matches symbol keys
+                        // (which use export names). Aliases (e.g. { usedBarrel as barrelUsed })
+                        // or barrel re-exports no longer break isUsed marking or retainedUnused.
+                        // (Local alias irrelevant for source symbol tracking.)
+                        importKey = spec.imported.name;
                     }
                     else if (t.isImportDefaultSpecifier(spec)) {
-                        moduleImports.set(spec.local.name, source);
+                        importKey = 'default';
                     }
+                    else {
+                        importKey = spec.local.name; // fallback
+                    }
+                    moduleImports.set(importKey, source);
                 });
             }
         });
@@ -133,6 +151,8 @@ class SourceAnalyzer {
         });
     }
     // Simple usage analysis - mark used based on imports
+    // (issue #3 fix complete: importKey now always uses source exportName, so direct
+    // `${sourceMod}:${importKey}` lookup succeeds for aliases/re-exports)
     markUsedSymbols(entryPoint) {
         // Basic traversal from entry, mark imported symbols as used
         const visited = new Set();
@@ -143,9 +163,9 @@ class SourceAnalyzer {
                 continue;
             visited.add(current);
             const imports = this.graph.imports.get(current) || new Map();
-            imports.forEach((source, local) => {
+            imports.forEach((source, importKey) => {
                 const sourceMod = source.startsWith('./') ? path.join(path.dirname(current), source).replace(/^\.\//, '') : source;
-                const symKey = `${sourceMod}:${local}`;
+                const symKey = `${sourceMod}:${importKey}`;
                 const sym = this.symbols.get(symKey);
                 if (sym) {
                     sym.isUsed = true;

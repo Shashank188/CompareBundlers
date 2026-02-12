@@ -17,9 +17,9 @@
           "isExported": true
         }
       ],
-      "eliminatedSymbols": 12,
+      "eliminatedSymbols": 11,
       "retainedUnused": 2,
-      "totalExports": 14,
+      "totalExports": 13,
       "reasons": {
         "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
@@ -31,7 +31,7 @@
         {
           "name": "usedBarrel",
           "module": "barrel",
-          "isUsed": false,
+          "isUsed": true,
           "isExported": true
         },
         {
@@ -53,11 +53,10 @@
           "isExported": true
         }
       ],
-      "eliminatedSymbols": 10,
-      "retainedUnused": 4,
-      "totalExports": 14,
+      "eliminatedSymbols": 9,
+      "retainedUnused": 3,
+      "totalExports": 13,
       "reasons": {
-        "barrel:usedBarrel": "Rollup tree shaking with sideEffect flag consideration",
         "barrel:unusedBarrel": "Rollup tree shaking with sideEffect flag consideration",
         "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
@@ -81,7 +80,7 @@
         {
           "name": "usedBarrel",
           "module": "barrel",
-          "isUsed": false,
+          "isUsed": true,
           "isExported": true
         },
         {
@@ -139,13 +138,12 @@
           "isExported": true
         }
       ],
-      "eliminatedSymbols": 2,
-      "retainedUnused": 11,
-      "totalExports": 14,
+      "eliminatedSymbols": 1,
+      "retainedUnused": 10,
+      "totalExports": 13,
       "reasons": {
         "barrel-internal:usedBarrel": "Rolldown specific retention (new bundler behavior)",
         "barrel-internal:unusedBarrel": "Rolldown specific retention (new bundler behavior)",
-        "barrel:usedBarrel": "Rolldown specific retention (new bundler behavior)",
         "barrel:unusedBarrel": "Rolldown specific retention (new bundler behavior)",
         "index:usedFunction": "Rolldown specific retention (new bundler behavior)",
         "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
@@ -159,11 +157,11 @@
   ],
   "summary": {
     "bestTreeShaker": "webpack",
-    "totalEliminated": 24,
+    "totalEliminated": 21,
     "comparison": {
-      "webpack": 12,
-      "vite": 10,
-      "rolldown": 2
+      "webpack": 11,
+      "vite": 9,
+      "rolldown": 1
     }
   }
 }

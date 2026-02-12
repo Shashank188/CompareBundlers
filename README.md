@@ -42,3 +42,16 @@ Includes:
 
 Rerun `npm run demo` to see non-zero `retainedUnused` values.
 
+
+## Fixes for Additional Issues (v1.0.2)
+1. **Exclude config TS files (issue #1)**: Updated `getAllTsFiles()` in `src/analyzer.ts` to skip `*config*` files. Prevents bundler-generated configs from entering symbol graph/comparison (avoids noise in pre-bundle analysis).
+
+2. **Remove unused exports (issue #2)**: Deleted `exports` key from `DependencyGraph` (in `types.ts` + `analyzer.ts`). Was populated in `parseFile` but never consumed.
+
+3. **Symbol key/alias mismatch (issue #3)**: In `src/analyzer.ts`:
+   - `parseFile`: ImportDeclaration now keys on source *exportName* (e.g., `usedBarrel` not alias `barrelUsed`).
+   - `markUsedSymbols`: Direct lookup with exportName.
+   - Resolves incorrect `isUsed` for aliases/barrels → proper `retainedUnused` (e.g., usedBarrel now correctly `isUsed: true` in reports).
+
+Rerun `npm run demo` (totalExports may vary slightly due to exclusions; alias handling improved). All fixes documented inline + here. Version bumped.
+
