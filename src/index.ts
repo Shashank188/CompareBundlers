@@ -101,3 +101,7 @@ export class TreeShakeSDK {
     return symbols.map(() => true);
   }
 }
+
+// Re-export types for tests (no any/unknown)
+export type { TreeShakeSDKOptions, ComparisonReport, BundleAnalysis, SymbolInfo } from './types';
+

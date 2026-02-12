@@ -63,8 +63,9 @@ class BundlerRunner {
             return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
         }
         catch (error) {
-            errors.push(error.message || String(error));
-            console.error('Webpack bundling failed:', error);
+            const msg = error instanceof Error ? error.message : String(error);
+            errors.push(msg);
+            console.error('Webpack bundling failed:', msg);
             throw error;
         }
     }
@@ -95,8 +96,9 @@ class BundlerRunner {
             return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
         }
         catch (error) {
-            errors.push(error.message || String(error));
-            console.error('Vite bundling failed:', error);
+            const msg = error instanceof Error ? error.message : String(error);
+            errors.push(msg);
+            console.error('Vite bundling failed:', msg);
             throw error;
         }
     }
@@ -120,8 +122,9 @@ class BundlerRunner {
             return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
         }
         catch (error) {
-            errors.push(error.message || String(error));
-            console.error('Rolldown bundling failed:', error);
+            const msg = error instanceof Error ? error.message : String(error);
+            errors.push(msg);
+            console.error('Rolldown bundling failed:', msg);
             throw error;
         }
     }

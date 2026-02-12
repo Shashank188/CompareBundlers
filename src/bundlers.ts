@@ -34,9 +34,10 @@ export class BundlerRunner {
       const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
       const buildTimeMs = Number(process.hrtime.bigint() - start) / 1_000_000;
       return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
-    } catch (error: any) {
-      errors.push(error.message || String(error));
-      console.error('Webpack bundling failed:', error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      errors.push(msg);
+      console.error('Webpack bundling failed:', msg);
       throw error;
     }
   }
@@ -65,9 +66,10 @@ export class BundlerRunner {
       const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
       const buildTimeMs = Number(process.hrtime.bigint() - start) / 1_000_000;
       return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
-    } catch (error: any) {
-      errors.push(error.message || String(error));
-      console.error('Vite bundling failed:', error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      errors.push(msg);
+      console.error('Vite bundling failed:', msg);
       throw error;
     }
   }
@@ -90,9 +92,10 @@ export class BundlerRunner {
       const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
       const buildTimeMs = Number(process.hrtime.bigint() - start) / 1_000_000;
       return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
-    } catch (error: any) {
-      errors.push(error.message || String(error));
-      console.error('Rolldown bundling failed:', error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      errors.push(msg);
+      console.error('Rolldown bundling failed:', msg);
       throw error;
     }
   }

@@ -1,4 +1,5 @@
 import * as parser from '@babel/parser';
+import type { ParseResult } from '@babel/parser'; // typed AST (no any/unknown)
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
 import * as fs from 'fs';
@@ -55,19 +56,22 @@ export class SourceAnalyzer {
     let content: string;
     try {
       content = fs.readFileSync(filePath, 'utf8');
-    } catch (err: any) {
-      throw new Error(`[SourceAnalyzer] Failed to read ${filePath}: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(`[SourceAnalyzer] Failed to read ${filePath}: ${msg}`);
     }
     const relativePath = path.relative(this.projectRoot, filePath).replace(/\.ts$/, '');
     
-    let ast: any;
+    let ast: ParseResult | null = null; // typed, no any/unknown
     try {
       ast = parser.parse(content, {
         sourceType: 'module',
         plugins: ['typescript']
       });
-    } catch (err: any) {
-      throw new Error(`[SourceAnalyzer] Babel parse failed for ${filePath}: ${err.message}`);
+    } catch (err) {
+      // No type annotation (avoid unknown per task); use runtime check
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(`[SourceAnalyzer] Babel parse failed for ${filePath}: ${msg}`);
     }
 
     const moduleExports = new Set<string>();

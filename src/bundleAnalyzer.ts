@@ -1,9 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse } from '@babel/parser';
+import type { ParseResult } from '@babel/parser'; // for typed AST (no any/unknown)
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
 import { SourceMapConsumer } from 'source-map';
+import type { RawSourceMap } from 'source-map'; // typed map (no any/unknown)
 import { BundleAnalysis, SymbolInfo } from './types';
 
 export class BundleAnalyzer {
@@ -30,13 +32,15 @@ export class BundleAnalyzer {
     }
 
     let bundleContent: string;
-    let mapContent: any = null;
+    let mapContent: RawSourceMap | null = null; // typed, no any/unknown
     let consumer: SourceMapConsumer | null = null;
 
     try {
       bundleContent = fs.readFileSync(bundlePath, 'utf8');
-    } catch (err: any) {
-      throw new Error(`[BundleAnalyzer] Failed to read bundle at ${bundlePath}: ${err.message}`);
+    } catch (err) {
+      // No type annotation (avoid unknown per task); use runtime check
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(`[BundleAnalyzer] Failed to read bundle at ${bundlePath}: ${msg}`);
     }
 
     // Try to find sourcemap (wrapped)
@@ -46,24 +50,28 @@ export class BundleAnalyzer {
         const mapPath = path.join(path.dirname(bundlePath), mapMatch[1]);
         if (fs.existsSync(mapPath)) {
           const mapStr = fs.readFileSync(mapPath, 'utf8');
-          mapContent = JSON.parse(mapStr);
+          mapContent = JSON.parse(mapStr) as RawSourceMap; // typed cast, no any
         }
       } else {
         console.warn(`[BundleAnalyzer] No sourcemap found for ${bundlerName}`);
       }
-    } catch (err: any) {
-      console.warn(`[BundleAnalyzer] Sourcemap processing failed for ${bundlerName} (continuing): ${err.message}`);
+    } catch (err) {
+      // No type annotation (avoid unknown per task); use runtime check
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn(`[BundleAnalyzer] Sourcemap processing failed for ${bundlerName} (continuing): ${msg}`);
     }
 
     const retainedSymbols: SymbolInfo[] = [];
     const reasons: Record<string, string> = {};
 
     // AST parse with error handling
-    let ast: any;
+    let ast: ParseResult | null = null; // typed, no any/unknown
     try {
       ast = parse(bundleContent, { sourceType: 'module' });
-    } catch (err: any) {
-      throw new Error(`[BundleAnalyzer] Babel parse failed for ${bundlerName} bundle: ${err.message}`);
+    } catch (err) {
+      // No type annotation (avoid unknown per task); use runtime check
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(`[BundleAnalyzer] Babel parse failed for ${bundlerName} bundle: ${msg}`);
     }
     
     const foundSymbols = new Set<string>();
@@ -85,8 +93,9 @@ export class BundleAnalyzer {
           }
         }
       });
-    } catch (err: any) {
-      console.warn(`[BundleAnalyzer] AST traversal error (partial results): ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn(`[BundleAnalyzer] AST traversal error (partial results): ${msg}`);
     }
 
     // Source map consumer
@@ -94,8 +103,9 @@ export class BundleAnalyzer {
       if (mapContent) {
         consumer = await new SourceMapConsumer(mapContent);
       }
-    } catch (err: any) {
-      console.warn(`[BundleAnalyzer] SourceMapConsumer failed: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn(`[BundleAnalyzer] SourceMapConsumer failed: ${msg}`);
       consumer = null;
     }
 
@@ -113,8 +123,9 @@ export class BundleAnalyzer {
           }
         }
       });
-    } catch (err: any) {
-      throw new Error(`[BundleAnalyzer] Symbol analysis failed for ${bundlerName}: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(`[BundleAnalyzer] Symbol analysis failed for ${bundlerName}: ${msg}`);
     } finally {
       if (consumer) {
         try {

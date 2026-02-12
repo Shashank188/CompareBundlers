@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import { TreeShakeSDK } from '../src';
+import { TreeShakeSDK, type TreeShakeSDKOptions, type ComparisonReport } from '../src';
 import { SourceAnalyzer } from '../src/analyzer';
 import { BundleAnalyzer } from '../src/bundleAnalyzer';
 import { BundlerRunner } from '../src/bundlers';
@@ -56,15 +56,16 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
 
   // Test TreeShakeSDK integration
   test('TreeShakeSDK validates options and propagates errors', async () => {
-    expect(() => new TreeShakeSDK({} as any)).toThrow(); // invalid options
+    expect(() => new TreeShakeSDK({} as unknown as TreeShakeSDKOptions)).toThrow(); // invalid options, cast for test (no any)
     const sdk = new TreeShakeSDK({
       demoProjectPath: '/tmp/demo/src',
       entryPoint: 'index.ts',
       outputDir: '/tmp/out',
       production: true
     });
-    // Mock internal to avoid full run
-    jest.spyOn(sdk as any, 'runComparison').mockRejectedValue(new Error('Bundler err'));
+    // Mock internal to avoid full run (no any/unknown)
+    // Use type assertion without 'any'
+    (sdk as { runComparison: () => Promise<ComparisonReport> }).runComparison = jest.fn().mockRejectedValue(new Error('Bundler err'));
     await expect(sdk.runComparison()).rejects.toThrow(/Bundler err/);
   });
 

@@ -36,6 +36,7 @@ export interface ComparisonReport {
 }
 export interface TreeShakeSDKOptions {
     demoProjectPath: string;
+    demoFolder?: string;
     entryPoint: string;
     outputDir: string;
     production: boolean;

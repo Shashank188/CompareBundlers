@@ -10,3 +10,4 @@ export declare class TreeShakeSDK {
     private generateComparison;
     validateRetention(bundlePath: string, symbols: SymbolInfo[]): Promise<boolean[]>;
 }
+export type { TreeShakeSDKOptions, ComparisonReport, BundleAnalysis, SymbolInfo } from './types';

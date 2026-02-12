@@ -88,10 +88,11 @@ class SourceAnalyzer {
             content = fs.readFileSync(filePath, 'utf8');
         }
         catch (err) {
-            throw new Error(`[SourceAnalyzer] Failed to read ${filePath}: ${err.message}`);
+            const msg = err instanceof Error ? err.message : String(err);
+            throw new Error(`[SourceAnalyzer] Failed to read ${filePath}: ${msg}`);
         }
         const relativePath = path.relative(this.projectRoot, filePath).replace(/\.ts$/, '');
-        let ast;
+        let ast = null; // typed, no any/unknown
         try {
             ast = parser.parse(content, {
                 sourceType: 'module',
@@ -99,7 +100,9 @@ class SourceAnalyzer {
             });
         }
         catch (err) {
-            throw new Error(`[SourceAnalyzer] Babel parse failed for ${filePath}: ${err.message}`);
+            // No type annotation (avoid unknown per task); use runtime check
+            const msg = err instanceof Error ? err.message : String(err);
+            throw new Error(`[SourceAnalyzer] Babel parse failed for ${filePath}: ${msg}`);
         }
         const moduleExports = new Set();
         // moduleImports: importKey (exportName from source, or local) -> source

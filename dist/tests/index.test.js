@@ -83,15 +83,16 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
     });
     // Test TreeShakeSDK integration
     test('TreeShakeSDK validates options and propagates errors', async () => {
-        expect(() => new src_1.TreeShakeSDK({})).toThrow(); // invalid options
+        expect(() => new src_1.TreeShakeSDK({})).toThrow(); // invalid options, cast for test (no any)
         const sdk = new src_1.TreeShakeSDK({
             demoProjectPath: '/tmp/demo/src',
             entryPoint: 'index.ts',
             outputDir: '/tmp/out',
             production: true
         });
-        // Mock internal to avoid full run
-        jest.spyOn(sdk, 'runComparison').mockRejectedValue(new Error('Bundler err'));
+        // Mock internal to avoid full run (no any/unknown)
+        // Use type assertion without 'any'
+        sdk.runComparison = jest.fn().mockRejectedValue(new Error('Bundler err'));
         await expect(sdk.runComparison()).rejects.toThrow(/Bundler err/);
     });
     // Additional unit tests for each (edge cases)

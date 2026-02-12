@@ -66,13 +66,15 @@ class BundleAnalyzer {
             throw new Error('[BundleAnalyzer] Missing required params: bundlerName or sourceRoot');
         }
         let bundleContent;
-        let mapContent = null;
+        let mapContent = null; // typed, no any/unknown
         let consumer = null;
         try {
             bundleContent = fs.readFileSync(bundlePath, 'utf8');
         }
         catch (err) {
-            throw new Error(`[BundleAnalyzer] Failed to read bundle at ${bundlePath}: ${err.message}`);
+            // No type annotation (avoid unknown per task); use runtime check
+            const msg = err instanceof Error ? err.message : String(err);
+            throw new Error(`[BundleAnalyzer] Failed to read bundle at ${bundlePath}: ${msg}`);
         }
         // Try to find sourcemap (wrapped)
         try {
@@ -81,7 +83,7 @@ class BundleAnalyzer {
                 const mapPath = path.join(path.dirname(bundlePath), mapMatch[1]);
                 if (fs.existsSync(mapPath)) {
                     const mapStr = fs.readFileSync(mapPath, 'utf8');
-                    mapContent = JSON.parse(mapStr);
+                    mapContent = JSON.parse(mapStr); // typed cast, no any
                 }
             }
             else {
@@ -89,17 +91,21 @@ class BundleAnalyzer {
             }
         }
         catch (err) {
-            console.warn(`[BundleAnalyzer] Sourcemap processing failed for ${bundlerName} (continuing): ${err.message}`);
+            // No type annotation (avoid unknown per task); use runtime check
+            const msg = err instanceof Error ? err.message : String(err);
+            console.warn(`[BundleAnalyzer] Sourcemap processing failed for ${bundlerName} (continuing): ${msg}`);
         }
         const retainedSymbols = [];
         const reasons = {};
         // AST parse with error handling
-        let ast;
+        let ast = null; // typed, no any/unknown
         try {
             ast = (0, parser_1.parse)(bundleContent, { sourceType: 'module' });
         }
         catch (err) {
-            throw new Error(`[BundleAnalyzer] Babel parse failed for ${bundlerName} bundle: ${err.message}`);
+            // No type annotation (avoid unknown per task); use runtime check
+            const msg = err instanceof Error ? err.message : String(err);
+            throw new Error(`[BundleAnalyzer] Babel parse failed for ${bundlerName} bundle: ${msg}`);
         }
         const foundSymbols = new Set();
         try {
@@ -121,7 +127,8 @@ class BundleAnalyzer {
             });
         }
         catch (err) {
-            console.warn(`[BundleAnalyzer] AST traversal error (partial results): ${err.message}`);
+            const msg = err instanceof Error ? err.message : String(err);
+            console.warn(`[BundleAnalyzer] AST traversal error (partial results): ${msg}`);
         }
         // Source map consumer
         try {
@@ -130,7 +137,8 @@ class BundleAnalyzer {
             }
         }
         catch (err) {
-            console.warn(`[BundleAnalyzer] SourceMapConsumer failed: ${err.message}`);
+            const msg = err instanceof Error ? err.message : String(err);
+            console.warn(`[BundleAnalyzer] SourceMapConsumer failed: ${msg}`);
             consumer = null;
         }
         // Symbol processing
@@ -148,7 +156,8 @@ class BundleAnalyzer {
             });
         }
         catch (err) {
-            throw new Error(`[BundleAnalyzer] Symbol analysis failed for ${bundlerName}: ${err.message}`);
+            const msg = err instanceof Error ? err.message : String(err);
+            throw new Error(`[BundleAnalyzer] Symbol analysis failed for ${bundlerName}: ${msg}`);
         }
         finally {
             if (consumer) {

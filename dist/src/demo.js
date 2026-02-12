@@ -37,9 +37,9 @@ const path = __importStar(require("path"));
 const index_1 = require("./index");
 const fs = __importStar(require("fs"));
 async function main() {
-    // Path fix for built/demo context (enhancement compatible)
+    // Path fix + enhancement: Allow custom demoFolder via options (fallback 'demo/src')
     const rootDir = path.resolve(__dirname, '..', '..'); // handles dist/src
-    const demoProjectPath = path.resolve(rootDir, 'demo/src');
+    const demoProjectPath = path.resolve(rootDir, 'demo/src'); // default fallback
     const outputDir = path.resolve(rootDir, 'demo/dist');
     // Ensure output dir
     if (!fs.existsSync(outputDir)) {

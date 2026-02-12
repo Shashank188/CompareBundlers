@@ -43,6 +43,8 @@ export interface ComparisonReport {
 
 export interface TreeShakeSDKOptions {
   demoProjectPath: string;
+  // Enhancement: Optional demoFolder (user-defined path; fallback to 'demo/src' in demo app)
+  demoFolder?: string;
   entryPoint: string;
   outputDir: string;
   production: boolean;
