@@ -30,8 +30,11 @@ export class BundlerRunner {
         stdio: 'pipe'
       });
       const output = (result.stdout || '') + (result.stderr || '');
-      if (output.includes('warning') || output.includes('WARN')) {
-        warnings.push(...output.split('\n').filter(l => l.toLowerCase().includes('warn') || l.toLowerCase().includes('error')));
+      if (output.includes('warning') || output.includes('WARN') || output.includes('error')) {
+        // Separate: errors to errors key, warnings to warnings (fix per task)
+        const lines = output.split('\n');
+        warnings.push(...lines.filter(l => l.toLowerCase().includes('warn') && !l.toLowerCase().includes('error')));
+        errors.push(...lines.filter(l => l.toLowerCase().includes('error')));
       }
       const bundlePath = path.join(outputDir, 'bundle.js');
       const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
@@ -60,7 +63,12 @@ export class BundlerRunner {
         stdio: 'pipe'
       });
       const output = (result.stdout || '') + (result.stderr || '');
-      if (output.includes('warning')) warnings.push(...output.split('\n').filter(l => l.toLowerCase().includes('warn') || l.toLowerCase().includes('error')));
+      if (output.includes('warning') || output.includes('error')) {
+        // Separate: errors to errors key, warnings to warnings (fix per task)
+        const lines = output.split('\n');
+        warnings.push(...lines.filter(l => l.toLowerCase().includes('warn') && !l.toLowerCase().includes('error')));
+        errors.push(...lines.filter(l => l.toLowerCase().includes('error')));
+      }
       // Find actual bundle (Vite may name variably)
       let bundlePath = path.join(outputDir, 'bundle.js');
       if (!fs.existsSync(bundlePath)) {
@@ -93,7 +101,12 @@ export class BundlerRunner {
         stdio: 'pipe'
       });
       const output = (result.stdout || '') + (result.stderr || '');
-      if (output.includes('warning')) warnings.push(...output.split('\n').filter(l => l.toLowerCase().includes('warn') || l.toLowerCase().includes('error')));
+      if (output.includes('warning') || output.includes('error')) {
+        // Separate: errors to errors key, warnings to warnings (fix per task)
+        const lines = output.split('\n');
+        warnings.push(...lines.filter(l => l.toLowerCase().includes('warn') && !l.toLowerCase().includes('error')));
+        errors.push(...lines.filter(l => l.toLowerCase().includes('error')));
+      }
       const bundlePath = path.join(outputDir, 'bundle.js');
       const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
       const buildTimeMs = Number(process.hrtime.bigint() - start) / 1_000_000;

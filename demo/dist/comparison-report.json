@@ -25,7 +25,7 @@
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
       },
       "bundleSizeBytes": 146,
-      "buildTimeMs": 3602.058414,
+      "buildTimeMs": 3278.189825,
       "warnings": [],
       "errors": []
     },
@@ -66,9 +66,20 @@
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
       },
       "bundleSizeBytes": 228,
-      "buildTimeMs": 743.701204,
-      "warnings": [],
-      "errors": []
+      "buildTimeMs": 679.988531,
+      "warnings": [
+        "    chunkSizeWarningLimit: 500,",
+        "        chunkSizeWarningLimit: 500,",
+        "    hasWarned: false,",
+        "    warn: [Function: warn],",
+        "    warnOnce: [Function: warnOnce],"
+      ],
+      "errors": [
+        "    dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },",
+        "        dynamicImportVarsOptions: { warnOnError: true, exclude: [ /node_modules/ ] },",
+        "    error: [Function: error],",
+        "    hasErrorLogged: [Function: hasErrorLogged]"
+      ]
     },
     {
       "bundler": "rolldown",
@@ -162,10 +173,10 @@
         "utils:deadCode": "Rolldown specific retention (new bundler behavior)"
       },
       "bundleSizeBytes": 491,
-      "buildTimeMs": 500.014307,
+      "buildTimeMs": 480.450436,
       "warnings": [
         " WARN  Option verbose is unrecognized. We will ignore this option.",
-        "(node:40002) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///testbed/compare-bundlers/demo/src/rolldown.config.js is not specified and it doesn't parse as CommonJS.",
+        "(node:48411) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///testbed/compare-bundlers/demo/src/rolldown.config.js is not specified and it doesn't parse as CommonJS.",
         "To eliminate this warning, add \"type\": \"module\" to /testbed/compare-bundlers/package.json.",
         "(Use `node --trace-warnings ...` to show where the warning was created)"
       ],
@@ -181,8 +192,8 @@
       "rolldown": 1
     },
     "totalBundleSizeBytes": 865,
-    "avgBuildTimeMs": 1615.2579750000002,
-    "totalWarnings": 4,
-    "totalErrors": 0
+    "avgBuildTimeMs": 1479.5429306666665,
+    "totalWarnings": 9,
+    "totalErrors": 4
   }
 }
