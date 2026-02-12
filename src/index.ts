@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TreeShakeSDKOptions, ComparisonReport, BundleAnalysis, SymbolInfo } from './types';
 import { SourceAnalyzer } from './analyzer';
-import { BundlerRunner } from './bundlers';
+import { BundlerRunner, BundleMetrics } from './bundlers';
 import { BundleAnalyzer } from './bundleAnalyzer';
 
 export class TreeShakeSDK {
@@ -30,49 +30,50 @@ export class TreeShakeSDK {
     const { symbols } = await this.sourceAnalyzer.analyzeSource();
     this.sourceAnalyzer.markUsedSymbols(this.options.entryPoint);
 
+    // Enhanced bundling with metrics (size/time/warnings/errors)
     console.log('Bundling with Webpack...');
     const webpackOutDir = path.join(this.options.outputDir, 'webpack');
     fs.mkdirSync(webpackOutDir, { recursive: true });
-    const webpackBundle = await this.bundlerRunner.bundleWithWebpack(this.options.entryPoint, webpackOutDir);
+    const webpackMetrics = await this.bundlerRunner.bundleWithWebpack(this.options.entryPoint, webpackOutDir);
 
     console.log('Bundling with Vite...');
     const viteOutDir = path.join(this.options.outputDir, 'vite');
     fs.mkdirSync(viteOutDir, { recursive: true });
-    const viteBundle = await this.bundlerRunner.bundleWithVite(this.options.entryPoint, viteOutDir);
+    const viteMetrics = await this.bundlerRunner.bundleWithVite(this.options.entryPoint, viteOutDir);
 
     console.log('Bundling with Rolldown...');
     const rolldownOutDir = path.join(this.options.outputDir, 'rolldown');
     fs.mkdirSync(rolldownOutDir, { recursive: true });
-    const rolldownBundle = await this.bundlerRunner.bundleWithRolldown(this.options.entryPoint, rolldownOutDir);
+    const rolldownMetrics = await this.bundlerRunner.bundleWithRolldown(this.options.entryPoint, rolldownOutDir);
 
-    // Analyze each
+    // Analyze each with metrics
     console.log('Analyzing bundles...');
     const analyses: BundleAnalysis[] = [];
     
-    const webpackAnalysis = await this.bundleAnalyzer.analyzeBundle(webpackBundle, symbols, 'webpack', this.options.demoProjectPath);
-    analyses.push(webpackAnalysis);
+    const webpackAnalysis = await this.bundleAnalyzer.analyzeBundle(webpackMetrics.bundlePath, symbols, 'webpack', this.options.demoProjectPath);
+    analyses.push({ ...webpackAnalysis, bundleSizeBytes: webpackMetrics.sizeBytes, buildTimeMs: webpackMetrics.buildTimeMs, warnings: webpackMetrics.warnings, errors: webpackMetrics.errors });
     
-    // For Vite, find the actual bundle file
-    let viteActualBundle = path.join(viteOutDir, 'bundle.js');
-    if (!fs.existsSync(viteActualBundle)) {
-      // Find any js file
-      const files = fs.readdirSync(viteOutDir);
-      const jsFile = files.find(f => f.endsWith('.js'));
-      if (jsFile) viteActualBundle = path.join(viteOutDir, jsFile);
-    }
+    // For Vite, use metrics path
+    const viteActualBundle = viteMetrics.bundlePath;
     const viteAnalysis = await this.bundleAnalyzer.analyzeBundle(viteActualBundle, symbols, 'vite', this.options.demoProjectPath);
-    analyses.push(viteAnalysis);
+    analyses.push({ ...viteAnalysis, bundleSizeBytes: viteMetrics.sizeBytes, buildTimeMs: viteMetrics.buildTimeMs, warnings: viteMetrics.warnings, errors: viteMetrics.errors });
     
-    const rolldownAnalysis = await this.bundleAnalyzer.analyzeBundle(rolldownBundle, symbols, 'rolldown', this.options.demoProjectPath);
-    analyses.push(rolldownAnalysis);
+    const rolldownAnalysis = await this.bundleAnalyzer.analyzeBundle(rolldownMetrics.bundlePath, symbols, 'rolldown', this.options.demoProjectPath);
+    analyses.push({ ...rolldownAnalysis, bundleSizeBytes: rolldownMetrics.sizeBytes, buildTimeMs: rolldownMetrics.buildTimeMs, warnings: rolldownMetrics.warnings, errors: rolldownMetrics.errors });
 
+    // Enhanced summary with aggregates
     const report: ComparisonReport = {
       projectName: 'demo-tree-shake-project',
       analyses,
       summary: {
         bestTreeShaker: this.findBestTreeShaker(analyses),
         totalEliminated: analyses.reduce((sum, a) => sum + a.eliminatedSymbols, 0),
-        comparison: this.generateComparison(analyses)
+        comparison: this.generateComparison(analyses),
+        // New enhancements
+        totalBundleSizeBytes: analyses.reduce((sum, a) => sum + a.bundleSizeBytes, 0),
+        avgBuildTimeMs: analyses.reduce((sum, a) => sum + a.buildTimeMs, 0) / analyses.length,
+        totalWarnings: analyses.reduce((sum, a) => sum + a.warnings.length, 0),
+        totalErrors: analyses.reduce((sum, a) => sum + a.errors.length, 0)
       }
     };
 

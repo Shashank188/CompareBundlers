@@ -16,6 +16,10 @@ export interface BundleAnalysis {
     retainedUnused: number;
     totalExports: number;
     reasons: Record<string, string>;
+    bundleSizeBytes: number;
+    buildTimeMs: number;
+    warnings: string[];
+    errors: string[];
 }
 export interface ComparisonReport {
     projectName: string;
@@ -24,6 +28,10 @@ export interface ComparisonReport {
         bestTreeShaker: string;
         totalEliminated: number;
         comparison: Record<string, number>;
+        totalBundleSizeBytes: number;
+        avgBuildTimeMs: number;
+        totalWarnings: number;
+        totalErrors: number;
     };
 }
 export interface TreeShakeSDKOptions {

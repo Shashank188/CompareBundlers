@@ -55,3 +55,16 @@ Rerun `npm run demo` to see non-zero `retainedUnused` values.
 
 Rerun `npm run demo` (totalExports may vary slightly due to exclusions; alias handling improved). All fixes documented inline + here. Version bumped.
 
+
+## Report Enhancements (v1.0.3)
+Added to BundleAnalysis/ComparisonReport:
+1. **bundleSizeBytes**: Post-bundle output size (bytes) per bundler.
+2. **buildTimeMs**: Measured bundling duration.
+3. **warnings/errors**: Captured from bundler stdout/stderr (tracked in BundlerRunner).
+
+**Summary aggregates**: totalBundleSizeBytes, avgBuildTimeMs, totalWarnings, totalErrors.
+
+**Implementation**: Timing via `process.hrtime`, output capture in execSync (stdio pipe), metrics propagated in SDK + BundleAnalysis. Updated tests, demo report, types.
+
+Rerun `npm run demo` for enriched JSON (e.g., sizes ~100-500B, times ~ms).
+

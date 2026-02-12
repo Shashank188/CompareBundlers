@@ -55,7 +55,7 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
         fs.readdirSync.mockImplementation(() => { throw new Error('ENOENT'); });
         expect(() => analyzer.analyzeSource()).rejects.toThrow(/ENOENT/); // or handle in code
     });
-    // Test BundleAnalyzer error paths (per focus)
+    // Test BundleAnalyzer error paths (per focus) + enhancements
     test('BundleAnalyzer throws on invalid bundle or parse fail', async () => {
         const analyzer = new bundleAnalyzer_1.BundleAnalyzer();
         fs.existsSync.mockReturnValue(false);
@@ -68,6 +68,11 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
         fs.readFileSync.mockReturnValue('invalid js');
         await expect(analyzer.analyzeBundle('/bundle.js', new Map([['key', { name: 'test', module: 'm', isUsed: false, isExported: true }]]), 'test', '/'))
             .rejects.toThrow(/Babel parse failed/);
+        // Reset mock for success + enhancements check
+        mockParse.mockImplementation(() => ({ type: 'Program' })); // mock AST
+        const result = await analyzer.analyzeBundle('/ok.js', new Map([['k', { name: 's', module: 'm', isUsed: false, isExported: true }]]), 'test', '/');
+        expect(result).toHaveProperty('bundleSizeBytes', 0); // default from analyzer
+        expect(result.warnings).toEqual([]);
     });
     // Test BundlerRunner
     test('BundlerRunner handles exec errors', async () => {

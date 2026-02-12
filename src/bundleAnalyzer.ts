@@ -136,7 +136,12 @@ export class BundleAnalyzer {
       eliminatedSymbols: eliminated,
       retainedUnused: retainedUnused,
       totalExports: totalExports,
-      reasons
+      reasons,
+      // Defaults for enhancements (overridden in SDK with real metrics)
+      bundleSizeBytes: 0,
+      buildTimeMs: 0,
+      warnings: [],
+      errors: []
     };
   }
 

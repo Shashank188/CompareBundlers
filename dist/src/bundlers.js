@@ -43,37 +43,84 @@ class BundlerRunner {
         this.outputBase = outputBase;
     }
     async bundleWithWebpack(entry, outputDir) {
+        const start = process.hrtime.bigint();
         const configPath = path.join(this.demoPath, 'webpack.config.js');
         this.createWebpackConfig(configPath, entry, outputDir);
+        const warnings = [];
+        const errors = [];
         try {
-            (0, child_process_1.execSync)(`npx webpack --config ${configPath} --mode production`, { stdio: 'inherit', cwd: this.demoPath });
-            return path.join(outputDir, 'bundle.js');
+            // Capture output for warnings/errors tracking (enhancement)
+            const stdout = (0, child_process_1.execSync)(`npx webpack --config ${configPath} --mode production --stats detailed`, {
+                stdio: ['pipe', 'pipe', 'pipe'],
+                cwd: this.demoPath,
+                encoding: 'utf8'
+            });
+            if (stdout.includes('warning') || stdout.includes('WARN'))
+                warnings.push(...stdout.split('\n').filter(l => l.toLowerCase().includes('warn')));
+            const bundlePath = path.join(outputDir, 'bundle.js');
+            const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
+            const buildTimeMs = Number(process.hrtime.bigint() - start) / 1000000;
+            return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
         }
         catch (error) {
+            errors.push(error.message || String(error));
             console.error('Webpack bundling failed:', error);
             throw error;
         }
     }
     async bundleWithVite(entry, outputDir) {
+        const start = process.hrtime.bigint();
         const configPath = path.join(this.demoPath, 'vite.config.ts');
         this.createViteConfig(configPath, entry, outputDir);
+        const warnings = [];
+        const errors = [];
         try {
-            (0, child_process_1.execSync)(`npx vite build --config ${configPath}`, { stdio: 'inherit', cwd: this.demoPath });
-            return path.join(outputDir, 'assets', 'index-*.js'); // approximate
+            // Capture output for tracking (enhancement #3)
+            const stdout = (0, child_process_1.execSync)(`npx vite build --config ${configPath} --debug`, {
+                stdio: ['pipe', 'pipe', 'pipe'],
+                cwd: this.demoPath,
+                encoding: 'utf8'
+            });
+            if (stdout.includes('warning'))
+                warnings.push(...stdout.split('\n').filter(l => l.toLowerCase().includes('warn')));
+            // Find actual bundle (Vite may name variably)
+            let bundlePath = path.join(outputDir, 'bundle.js');
+            if (!fs.existsSync(bundlePath)) {
+                const files = fs.readdirSync(outputDir).find(f => f.endsWith('.js'));
+                if (files)
+                    bundlePath = path.join(outputDir, files);
+            }
+            const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
+            const buildTimeMs = Number(process.hrtime.bigint() - start) / 1000000;
+            return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
         }
         catch (error) {
+            errors.push(error.message || String(error));
             console.error('Vite bundling failed:', error);
             throw error;
         }
     }
     async bundleWithRolldown(entry, outputDir) {
+        const start = process.hrtime.bigint();
         const configPath = path.join(this.demoPath, 'rolldown.config.js');
         this.createRolldownConfig(configPath, entry, outputDir);
+        const warnings = [];
+        const errors = [];
         try {
-            (0, child_process_1.execSync)(`npx rolldown --config ${configPath}`, { stdio: 'inherit', cwd: this.demoPath });
-            return path.join(outputDir, 'bundle.js');
+            const stdout = (0, child_process_1.execSync)(`npx rolldown --config ${configPath} --verbose`, {
+                stdio: ['pipe', 'pipe', 'pipe'],
+                cwd: this.demoPath,
+                encoding: 'utf8'
+            });
+            if (stdout.includes('warning'))
+                warnings.push(...stdout.split('\n').filter(l => l.toLowerCase().includes('warn')));
+            const bundlePath = path.join(outputDir, 'bundle.js');
+            const sizeBytes = fs.existsSync(bundlePath) ? fs.statSync(bundlePath).size : 0;
+            const buildTimeMs = Number(process.hrtime.bigint() - start) / 1000000;
+            return { bundlePath, sizeBytes, buildTimeMs, warnings, errors };
         }
         catch (error) {
+            errors.push(error.message || String(error));
             console.error('Rolldown bundling failed:', error);
             throw error;
         }

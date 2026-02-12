@@ -25,7 +25,7 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
     expect(() => analyzer.analyzeSource()).rejects.toThrow(/ENOENT/); // or handle in code
   });
 
-  // Test BundleAnalyzer error paths (per focus)
+  // Test BundleAnalyzer error paths (per focus) + enhancements
   test('BundleAnalyzer throws on invalid bundle or parse fail', async () => {
     const analyzer = new BundleAnalyzer();
     (fs.existsSync as jest.Mock).mockReturnValue(false);
@@ -39,6 +39,11 @@ describe('TreeShakeSDK Components - Error Handling & Core Logic', () => {
     (fs.readFileSync as jest.Mock).mockReturnValue('invalid js');
     await expect(analyzer.analyzeBundle('/bundle.js', new Map([['key', {name:'test', module:'m', isUsed:false, isExported:true}]]), 'test', '/'))
       .rejects.toThrow(/Babel parse failed/);
+    // Reset mock for success + enhancements check
+    mockParse.mockImplementation(() => ({ type: 'Program' })); // mock AST
+    const result = await analyzer.analyzeBundle('/ok.js', new Map([['k', {name:'s', module:'m', isUsed:false, isExported:true}]]), 'test', '/');
+    expect(result).toHaveProperty('bundleSizeBytes', 0); // default from analyzer
+    expect(result.warnings).toEqual([]);
   });
 
   // Test BundlerRunner

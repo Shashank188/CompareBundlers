@@ -37,8 +37,10 @@ const path = __importStar(require("path"));
 const index_1 = require("./index");
 const fs = __importStar(require("fs"));
 async function main() {
-    const demoProjectPath = path.resolve(__dirname, '../demo/src');
-    const outputDir = path.resolve(__dirname, '../demo/dist');
+    // Path fix for built/demo context (enhancement compatible)
+    const rootDir = path.resolve(__dirname, '..', '..'); // handles dist/src
+    const demoProjectPath = path.resolve(rootDir, 'demo/src');
+    const outputDir = path.resolve(rootDir, 'demo/dist');
     // Ensure output dir
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });

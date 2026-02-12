@@ -23,7 +23,11 @@
       "reasons": {
         "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
-      }
+      },
+      "bundleSizeBytes": 146,
+      "buildTimeMs": 3816.040331,
+      "warnings": [],
+      "errors": []
     },
     {
       "bundler": "vite",
@@ -60,7 +64,11 @@
         "barrel:unusedBarrel": "Rollup tree shaking with sideEffect flag consideration",
         "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
         "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
-      }
+      },
+      "bundleSizeBytes": 228,
+      "buildTimeMs": 746.023151,
+      "warnings": [],
+      "errors": []
     },
     {
       "bundler": "rolldown",
@@ -152,7 +160,11 @@
         "utils:usedConst": "Rolldown specific retention (new bundler behavior)",
         "utils:unusedConst": "Rolldown specific retention (new bundler behavior)",
         "utils:deadCode": "Rolldown specific retention (new bundler behavior)"
-      }
+      },
+      "bundleSizeBytes": 491,
+      "buildTimeMs": 564.700255,
+      "warnings": [],
+      "errors": []
     }
   ],
   "summary": {
@@ -162,6 +174,10 @@
       "webpack": 11,
       "vite": 9,
       "rolldown": 1
-    }
+    },
+    "totalBundleSizeBytes": 865,
+    "avgBuildTimeMs": 1708.9212456666667,
+    "totalWarnings": 0,
+    "totalErrors": 0
   }
 }
