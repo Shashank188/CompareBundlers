@@ -68,3 +68,10 @@ Added to BundleAnalysis/ComparisonReport:
 
 Rerun `npm run demo` for enriched JSON (e.g., sizes ~100-500B, times ~ms).
 
+
+## Process Fail on Error (v1.0.4)
+- Added top-level try/catch in `TreeShakeSDK.runComparison()` and `demo.main()`: Any bundler error causes `process.exit(1)`.
+- Demo now always passes clean (no errors in run; warnings separated).
+
+**Changes**: Error propagation + exit code enforcement. Tests/demo verified.
+

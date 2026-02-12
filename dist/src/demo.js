@@ -78,5 +78,8 @@ ${report.analyses.map(a => `<tr><td>${a.bundler}</td><td>${a.eliminatedSymbols}<
     fs.writeFileSync(htmlPath, htmlContent);
     console.log(`HTML report saved to ${htmlPath}`);
 }
-main().catch(console.error);
+main().catch(err => {
+    console.error('Demo failed:', err);
+    process.exit(1); // ensure exit 1 on error
+});
 //# sourceMappingURL=demo.js.map
