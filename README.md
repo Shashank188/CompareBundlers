@@ -31,7 +31,14 @@ Import `TreeShakeSDK` from the package for custom usage.
 ## Report Output
 Includes:
 - Eliminated exports count per bundler
-- Retained-but-unused symbols
+- Retained-but-unused symbols (now correctly computed; see fix below)
 - Retention reasons (e.g., side effects)
 - Summary with best performer
+
+## Fix for retainedUnused (v1.0.1)
+**Issue**: In `src/bundleAnalyzer.ts:59`, `isUsed` was incorrectly overridden with retention status, causing `retainedUnused` to always be 0 (line 73 comment noted this).
+
+**Fix**: Preserve original `sym.isUsed` (from pre-bundle graph) in `updatedSym`; compute `retainedUnused` from original usage. This accurately identifies "retained-but-unused" exports (e.g., dead code kept due to side-effects or bundler heuristics). Updated comment and logic in `analyzeBundle()`.
+
+Rerun `npm run demo` to see non-zero `retainedUnused` values.
 

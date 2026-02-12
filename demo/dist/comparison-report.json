@@ -7,18 +7,18 @@
         {
           "name": "usedSideEffect",
           "module": "side-effects",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedSideEffect",
           "module": "side-effects",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         }
       ],
       "eliminatedSymbols": 12,
-      "retainedUnused": 0,
+      "retainedUnused": 2,
       "totalExports": 14,
       "reasons": {
         "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
@@ -31,30 +31,30 @@
         {
           "name": "usedBarrel",
           "module": "barrel",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedBarrel",
           "module": "barrel",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "usedSideEffect",
           "module": "side-effects",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedSideEffect",
           "module": "side-effects",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         }
       ],
       "eliminatedSymbols": 10,
-      "retainedUnused": 0,
+      "retainedUnused": 4,
       "totalExports": 14,
       "reasons": {
         "barrel:usedBarrel": "Rollup tree shaking with sideEffect flag consideration",
@@ -69,43 +69,43 @@
         {
           "name": "usedBarrel",
           "module": "barrel-internal",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedBarrel",
           "module": "barrel-internal",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "usedBarrel",
           "module": "barrel",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedBarrel",
           "module": "barrel",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "usedFunction",
           "module": "index",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "usedSideEffect",
           "module": "side-effects",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedSideEffect",
           "module": "side-effects",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
@@ -117,30 +117,30 @@
         {
           "name": "unusedFunction",
           "module": "utils",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "usedConst",
           "module": "utils",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "unusedConst",
           "module": "utils",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         },
         {
           "name": "deadCode",
           "module": "utils",
-          "isUsed": true,
+          "isUsed": false,
           "isExported": true
         }
       ],
       "eliminatedSymbols": 2,
-      "retainedUnused": 0,
+      "retainedUnused": 11,
       "totalExports": 14,
       "reasons": {
         "barrel-internal:usedBarrel": "Rolldown specific retention (new bundler behavior)",

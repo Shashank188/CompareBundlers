@@ -87,7 +87,12 @@ class BundleAnalyzer {
         }
         originalSymbols.forEach((sym, key) => {
             const isRetained = this.isSymbolRetained(sym, foundSymbols, bundleContent, consumer, sourceRoot);
-            const updatedSym = { ...sym, isUsed: isRetained }; // override
+            // FIXED: Preserve original sym.isUsed (from pre-bundle dependency graph analysis)
+            // instead of overriding with isRetained. This ensures retainedUnused correctly
+            // counts "retained-but-unused" (dead exports kept by bundler, e.g. due to side-effects
+            // or conservative analysis). Previously, override made retainedUnused always 0.
+            // See: https://github.com/rollup/rollup/issues/XXX (general tree-shaking nuance).
+            const updatedSym = { ...sym }; // keep original isUsed
             if (isRetained) {
                 retainedSymbols.push(updatedSym);
                 if (!sym.isUsed) {
@@ -99,7 +104,9 @@ class BundleAnalyzer {
             consumer.destroy();
         const totalExports = originalSymbols.size;
         const eliminated = totalExports - retainedSymbols.length;
-        const retainedUnused = retainedSymbols.filter(s => !s.isUsed).length; // wait, isUsed here means original
+        // retainedUnused now correctly computes based on *original* usage status
+        // (symbols retained by bundler despite not being used in entrypoint graph)
+        const retainedUnused = retainedSymbols.filter(s => !s.isUsed).length;
         return {
             bundler: bundlerName,
             retainedSymbols,
