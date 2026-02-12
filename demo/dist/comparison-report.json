@@ -1,0 +1,169 @@
+{
+  "projectName": "demo-tree-shake-project",
+  "analyses": [
+    {
+      "bundler": "webpack",
+      "retainedSymbols": [
+        {
+          "name": "usedSideEffect",
+          "module": "side-effects",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedSideEffect",
+          "module": "side-effects",
+          "isUsed": true,
+          "isExported": true
+        }
+      ],
+      "eliminatedSymbols": 12,
+      "retainedUnused": 0,
+      "totalExports": 14,
+      "reasons": {
+        "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
+        "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
+      }
+    },
+    {
+      "bundler": "vite",
+      "retainedSymbols": [
+        {
+          "name": "usedBarrel",
+          "module": "barrel",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedBarrel",
+          "module": "barrel",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "usedSideEffect",
+          "module": "side-effects",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedSideEffect",
+          "module": "side-effects",
+          "isUsed": true,
+          "isExported": true
+        }
+      ],
+      "eliminatedSymbols": 10,
+      "retainedUnused": 0,
+      "totalExports": 14,
+      "reasons": {
+        "barrel:usedBarrel": "Rollup tree shaking with sideEffect flag consideration",
+        "barrel:unusedBarrel": "Rollup tree shaking with sideEffect flag consideration",
+        "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
+        "side-effects:unusedSideEffect": "Side effects in module prevent full elimination"
+      }
+    },
+    {
+      "bundler": "rolldown",
+      "retainedSymbols": [
+        {
+          "name": "usedBarrel",
+          "module": "barrel-internal",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedBarrel",
+          "module": "barrel-internal",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "usedBarrel",
+          "module": "barrel",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedBarrel",
+          "module": "barrel",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "usedFunction",
+          "module": "index",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "usedSideEffect",
+          "module": "side-effects",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedSideEffect",
+          "module": "side-effects",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "usedFunction",
+          "module": "utils",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedFunction",
+          "module": "utils",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "usedConst",
+          "module": "utils",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "unusedConst",
+          "module": "utils",
+          "isUsed": true,
+          "isExported": true
+        },
+        {
+          "name": "deadCode",
+          "module": "utils",
+          "isUsed": true,
+          "isExported": true
+        }
+      ],
+      "eliminatedSymbols": 2,
+      "retainedUnused": 0,
+      "totalExports": 14,
+      "reasons": {
+        "barrel-internal:usedBarrel": "Rolldown specific retention (new bundler behavior)",
+        "barrel-internal:unusedBarrel": "Rolldown specific retention (new bundler behavior)",
+        "barrel:usedBarrel": "Rolldown specific retention (new bundler behavior)",
+        "barrel:unusedBarrel": "Rolldown specific retention (new bundler behavior)",
+        "index:usedFunction": "Rolldown specific retention (new bundler behavior)",
+        "side-effects:usedSideEffect": "Side effects in module prevent full elimination",
+        "side-effects:unusedSideEffect": "Side effects in module prevent full elimination",
+        "utils:unusedFunction": "Rolldown specific retention (new bundler behavior)",
+        "utils:usedConst": "Rolldown specific retention (new bundler behavior)",
+        "utils:unusedConst": "Rolldown specific retention (new bundler behavior)",
+        "utils:deadCode": "Rolldown specific retention (new bundler behavior)"
+      }
+    }
+  ],
+  "summary": {
+    "bestTreeShaker": "webpack",
+    "totalEliminated": 24,
+    "comparison": {
+      "webpack": 12,
+      "vite": 10,
+      "rolldown": 2
+    }
+  }
+}

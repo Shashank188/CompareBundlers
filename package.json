@@ -1,0 +1,35 @@
+{
+  "name": "compare-bundlers",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for comparing tree shaking across bundlers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "demo": "npm run build && node dist/demo.js",
+    "test": "echo \"No tests yet\"",
+    "clean": "rm -rf dist demo/dist demo/webpack demo/vite demo/rolldown"
+  },
+  "keywords": ["tree-shaking", "bundlers", "webpack", "vite", "rolldown"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/generator": "^7.29.1",
+    "@babel/parser": "^7.29.0",
+    "@babel/traverse": "^7.29.0",
+    "@babel/types": "^7.29.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.2.3",
+    "@types/webpack": "^5.28.5",
+    "jest": "^30.2.0",
+    "rolldown": "^1.0.0-rc.4",
+    "rollup": "^4.57.1",
+    "source-map": "^0.7.6",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "webpack": "^5.105.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

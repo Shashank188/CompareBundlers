@@ -1,0 +1,1 @@
+(()=>{"use strict";console.log("Side effect executed!"),console.log("Used function"),console.log("Used from barrel"),console.log("Used side")})();
